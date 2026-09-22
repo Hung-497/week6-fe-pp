@@ -1,5 +1,5 @@
-import { useParams, useNavigate,  } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const BookPage = () => {
   const { id } = useParams();
@@ -24,28 +24,52 @@ const BookPage = () => {
     fetchBook();
   }, [id]);
 
-  return loading ? (
-  <p>Loading...</p>
-) : error ? (
-  <p>Error: {error}</p>
-) : book && (
-  <div>
-    <h2>{book.title}</h2>
-    <p>Author: {book.author}</p>
-    <p>ISBN: {book.isbn}</p>
-    <p>Publisher: {book.publisher}</p>
-    <p>Genre: {book.genre}</p>
-    <p>Available: {book.availability.isAvailable ? "Yes" : "No"}</p>
-    <p>
-      Due Date:{" "}
-      {book.availability.dueDate
-        ? new Date(book.availability.dueDate).toLocaleDateString()
-        : "—"}
-    </p>
-    <p>Borrower: {book.availability.borrower || "—"}</p>
-    <button onClick={() => navigate("/")}>Back</button>
-  </div>
-);}
+  const deleteBook = async (bookId) => {
+    try {
+      const res = await fetch(`/api/books/${bookId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete book");
+    } catch (error) {
+      console.error("Error deleting book:", error);
+    }
+  };
+
+  const onDelete = async (bookId) => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this book?",
+    );
+    if (confirm) {
+      await deleteBook(bookId);
+      navigate("/");
+    }
+  };
+
+  return (loading ? (
+    <p>Loading...</p>
+  ) : error ? (
+    <p>Error: {error}</p>
+  ) : (
+    book && (
+      <div>
+        <h2>{book.title}</h2>
+        <p>Author: {book.author}</p>
+        <p>ISBN: {book.isbn}</p>
+        <p>Publisher: {book.publisher}</p>
+        <p>Genre: {book.genre}</p>
+        <p>Available: {book.availability.isAvailable ? "Yes" : "No"}</p>
+        <p>
+          Due Date:{" "}
+          {book.availability.dueDate
+            ? new Date(book.availability.dueDate).toLocaleDateString()
+            : "—"}
+        </p>
+        <p>Borrower: {book.availability.borrower || "—"}</p>
+        <button onClick={() => navigate("/")}>Back</button>
+        <button onClick={() => onDelete(book._id)}>Delete</button>
+      </div>
+    )
+  ));
+};
 
 export default BookPage;
-
