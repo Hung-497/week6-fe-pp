@@ -35,7 +35,7 @@ const token = user ? user.token : null;
   }
 };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
     const newBook = {
       title,
@@ -49,8 +49,10 @@ const token = user ? user.token : null;
         borrower,
       },
     };
-    addBook(newBook);
-    navigate("/");
+    const success = await addBook(newBook);
+    if (success) {
+      navigate("/");
+    }
   };
 
   return (

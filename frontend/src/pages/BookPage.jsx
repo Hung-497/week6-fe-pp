@@ -41,13 +41,12 @@ const BookPage = ({ isAuthenticated }) => {
     }
   };
 
-  const onDelete = async (bookId) => {
+  const onDeleteClick = async (bookId) => {
     const confirm = window.confirm(
       "Are you sure you want to delete this book?",
     );
     if (confirm) {
       await deleteBook(bookId);
-      navigate("/");
     }
   };
 
